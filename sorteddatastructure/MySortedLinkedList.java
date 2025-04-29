@@ -1,80 +1,119 @@
 package hus.oop.sorteddatastructure;
 
+/**
+ * Lớp MySortedLinkedList
+ * Cài đặt danh sách liên kết đơn chứa các phần tử sắp xếp theo thứ tự tăng dần.
+ */
 public class MySortedLinkedList extends MySortedAbstractList {
     private Node head;
     private int size;
 
     /**
-     * Hàm dựng khởi tạo list để chứa dữ liệu.
+     * Hàm dựng khởi tạo danh sách rỗng.
      */
     public MySortedLinkedList() {
-        /* TODO */
+        head = null;
+        size = 0;
     }
 
     @Override
     public int size() {
-        /* TODO */
+        return size;
     }
 
     @Override
     public void clear() {
-        /* TODO */
+        head = null;
+        size = 0;
     }
 
-    /**
-     * Lấy giá trị của phần tử ở vị trí index.
-     * @param index
-     * @return
-     */
     @Override
     public int get(int index) {
-        /* TODO */
+        if (!checkBoundaries(index, size)) {
+            throw new IndexOutOfBoundsException("Invalid index " + index);
+        }
+        return getNodeByIndex(index).data;
     }
 
-    /**
-     * Thêm phần phần tử vào danh sách.
-     * @param value giá trị của phần tử dữ liệu được thêm vào.
-     */
     @Override
     public void add(int value) {
-        /* TODO */
+        Node newNode = new Node(value);
+        if (head == null || value < head.data) {
+            newNode.next = head;
+            head = newNode;
+        } else {
+            Node current = head;
+            while (current.next != null && current.next.data < value) {
+                current = current.next;
+            }
+            newNode.next = current.next;
+            current.next = newNode;
+        }
+        size++;
     }
 
-    /**
-     * Xóa phần tử dữ liệu tại vị trí index.
-     * Chỉ xóa được nếu index nằm trong đoạn [0 - (size() - 1)]
-     * @param index
-     */
     @Override
     public void remove(int index) {
-        /* TODO */
+        if (!checkBoundaries(index, size)) {
+            throw new IndexOutOfBoundsException("Invalid index " + index);
+        }
+
+        if (index == 0) {
+            head = head.next;
+        } else {
+            Node prev = getNodeByIndex(index - 1);
+            prev.next = prev.next.next;
+        }
+        size--;
     }
 
     @Override
     public int binarySearch(int value) {
-        /* TODO */
+        // Do danh sách liên kết không hỗ trợ tìm kiếm nhanh, dùng tìm tuyến tính.
+        Node current = head;
+        int index = 0;
+        while (current != null) {
+            if (current.data == value) {
+                return index;
+            }
+            if (current.data > value) {
+                break; // Vì danh sách luôn sắp xếp tăng dần
+            }
+            current = current.next;
+            index++;
+        }
+        return -1;
     }
 
     @Override
     public boolean contains(int value) {
-        /* TODO */
+        return binarySearch(value) != -1;
     }
 
     /**
-     * Phương thức lấy Node ở vị trí index.
-     * @param index
-     * @return
+     * Trả về node tại vị trí index.
+     * @param index vị trí cần lấy node
+     * @return node tại vị trí index
      */
     private Node getNodeByIndex(int index) {
-        /* TODO */
+        Node current = head;
+        int count = 0;
+        while (count < index) {
+            current = current.next;
+            count++;
+        }
+        return current;
     }
 
-    /**
-     * Lấy ra dữ liệu được lưu theo cấu trúc dữ liệu kiểu mảng.
-     * @return
-     */
     @Override
     public int[] toArray() {
-        /* TODO */
+        int[] result = new int[size];
+        Node current = head;
+        int index = 0;
+        while (current != null) {
+            result[index++] = current.data;
+            current = current.next;
+        }
+        return result;
     }
 }
